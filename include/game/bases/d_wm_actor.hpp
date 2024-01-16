@@ -1,7 +1,7 @@
 #pragma once
 
 #include <game/bases/d_base_actor.hpp>
-#include <game/mLib/m3d/m3d.hpp>
+#include <game/mLib/m_3d.hpp>
 #include <game/mLib/m_sphere.hpp>
 
 /// @brief Base class for world map actors.
