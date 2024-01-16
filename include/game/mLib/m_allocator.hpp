@@ -1,5 +1,5 @@
 #pragma once
-#include <lib/rvl/mem/MEM.h>
+#include <lib/rvl/mem/MEMHeapCommon.h>
 #include <lib/egg/heap/eggFrmHeap.hpp>
 
 class mAllocator_c : public MEMAllocator {

@@ -4,7 +4,7 @@
 #include <lib/nw4r/math/aabb.hpp>
 #include <lib/nw4r/math/mtx.hpp>
 
-#include <lib/rvl/mem/MEM.h>
+#include <lib/rvl/mem/MEMHeapCommon.h>
 
 namespace nw4r {
 namespace g3d {
