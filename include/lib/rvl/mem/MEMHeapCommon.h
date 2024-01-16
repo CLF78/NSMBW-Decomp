@@ -15,7 +15,22 @@ typedef struct {
     void *mpHeapStart;
     void *mpHeapEnd;
     OSMutex *mpMutex;
-} MEMiHeapHeader;
+} MEMiHeapHead;
+
+struct _MEMAllocatorFuncs;
+typedef struct {
+    const struct _MEMAllocatorFuncs *mpFuncs;
+    void *mpHeapHandle;
+    u32 mHeapParam1;
+    u32 mHeapParam2;
+} MEMAllocator;
+
+typedef struct _MEMAllocatorFuncs {
+    void *(*alloc)(MEMAllocator *, size_t);
+    void (*free)(MEMAllocator *, void *);
+} MEMAllocatorFuncs;
+
+void *MEMAllocFromAllocator(MEMAllocator *, int);
 
 #ifdef __cplusplus
 }

@@ -19,6 +19,11 @@ namespace EGG {
         static void free(void *, EGG::Heap *);
 
         char mPad[0xc];
-        MEMiHeapHeader *mpHeapHead;
+        MEMiHeapHead *mpHeapHead;
     };
 }
+
+void *operator new(size_t, void *);
+void *operator new(size_t, int);
+void *operator new(size_t, EGG::Heap *, int);
+void *operator new[](size_t, EGG::Heap *, int);
