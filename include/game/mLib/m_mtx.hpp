@@ -2,11 +2,12 @@
 #include <types.h>
 #include <game/mLib/m_angle.hpp>
 #include <lib/nw4r/math/vec.hpp>
+#include <lib/nw4r/math/mtx.hpp>
 #include <lib/rvl/mtx/mtx.h>
 
 /// @brief A 3x4 matrix.
 /// @ingroup mlib
-class mMtx_c {
+class mMtx_c : public nw4r::math::MTX34 {
 public:
     /// @brief Constructs an empty matrix.
     mMtx_c() {}
@@ -33,8 +34,6 @@ public:
     void toRot(mAng3_c &out) const; ///< Extracts the rotation vector from the matrix.
     void multVecZero(nw4r::math::VEC3 &out) const; ///< Extracts the translation vector from the matrix.
     void zero(); ///< Zeroes out the matrix.
-
-    float mData[3][4]; ///< The matrix components.
 
     static mMtx_c Identity; ///< The identity matrix.
 };

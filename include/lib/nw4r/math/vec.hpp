@@ -21,7 +21,12 @@ struct _VEC3 {
 /// @brief A three-dimensional floating point vector.
 struct VEC3 : public _VEC3 {
     VEC3() {}
-    VEC3(float fx, float fy, float fz) { x = fx; y = fy; z = fz; }
+    VEC3(float x, float y, float z) { this->x = x; this->y = y; this->z = z; }
+
+    void set(const VEC3 &v) { x = v.x; y = v.y; z = v.z; }
+    void set(float x, float y, float z) { this->x = x; this->y = y; this->z = z; }
+
+    void reset() { set(0, 0, 0); }
 };
 
 } // namespace math

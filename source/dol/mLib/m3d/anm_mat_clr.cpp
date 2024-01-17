@@ -1,6 +1,6 @@
-#include <dol/mLib/m_3d.hpp>
+#include <game/mLib/m_3d.hpp>
 
-#include <dol/mLib/m_heap.hpp>
+#include <game/mLib/m_heap.hpp>
 
 unsigned long m3d::anmMatClr_c::child_c::heapCost(nw4r::g3d::ResMdl mdl, nw4r::g3d::ResAnmClr anmClr, bool b) {
     unsigned long cost = 0;

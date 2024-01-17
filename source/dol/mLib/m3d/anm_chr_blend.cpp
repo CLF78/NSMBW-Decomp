@@ -1,4 +1,4 @@
-#include <dol/mLib/m_3d.hpp>
+#include <game/mLib/m_3d.hpp>
 
 bool m3d::anmChrBlend_c::create(nw4r::g3d::ResMdl mdl, int v, mAllocator_c *allocator, unsigned long *idk) {
     if (allocator == nullptr) {
