@@ -184,7 +184,7 @@ float m3d::anmTexSrt_c::getFrameMax(long i) const {
     return children[i].mF1;
 }
 
-void m3d::anmTexSrt_c::setFrameStart(long i, float frame) const {
+void m3d::anmTexSrt_c::setFrameStart(float frame, long i) {
     children[i].mF2 = frame;
 }
 

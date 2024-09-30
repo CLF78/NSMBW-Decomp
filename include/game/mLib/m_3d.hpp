@@ -76,7 +76,7 @@ namespace m3d {
         virtual void entry();
 
         void setOption(unsigned long sel, unsigned long opt);
-        bool getOption(unsigned long sel, unsigned long *opt);
+        bool getOption(unsigned long sel, unsigned long *opt) const;
         void setScale(float x, float y, float z);
         void setScale(const nw4r::math::VEC3 &scale);
         void setLocalMtx(const nw4r::math::MTX34 *mtx);
@@ -295,7 +295,7 @@ namespace m3d {
         bool checkFrame( float, long ) const;
         void setPlayMode( m3d::playMode_e, long );
         float getFrameMax( long ) const;
-        void setFrameStart( long, float ) const;
+        void setFrameStart( float, long );
     
         class child_c : public fanm_c {
         public:

@@ -17,10 +17,6 @@ void idk(int cameraID, EGG::Screen &scr) {
 
 // m3d/capture.cpp
 
-inline u16 actualDim(u16 size, bool half) {
-    return half ? size / 2 : size;
-}
-
 bool m3d::capture_c::create(EGG::Heap *heap, u16 width, u16 height, GXTexFmt texFmt, GXTexFilter texFilter, bool halfSize) {
     mTexWidth = width;
     mTexHeight = height;

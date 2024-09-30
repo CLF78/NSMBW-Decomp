@@ -24,7 +24,7 @@ void m3d::scnLeaf_c::setOption(unsigned long sel, unsigned long opt) {
     mpScn->SetScnObjOption(sel, opt);
 }
 
-bool m3d::scnLeaf_c::getOption(unsigned long sel, unsigned long *opt) {
+bool m3d::scnLeaf_c::getOption(unsigned long sel, unsigned long *opt) const {
     return mpScn->GetScnObjOption(sel, opt);
 }
 
