@@ -89,7 +89,7 @@ public:
          * @param folderSig The first 4 characters of the folder name.
          * @return The resource data.
          */
-        virtual void *execute(void *data, u32 folderSig) = 0;
+        virtual void *execute(void *data, unsigned long folderSig, const char *) = 0;
     };
 
     /// @brief A callback class for EGG::Archive::searchInside.

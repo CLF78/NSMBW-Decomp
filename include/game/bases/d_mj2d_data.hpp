@@ -61,7 +61,7 @@ public:
     void setPlayCountCoinBattle(int world, int level, int count);
 
     void onMultiWorldOpenFlag(int world); ///< Unlocks the given world in extra modes.
-    bool isMultiWorldOpenFlag(int world) const; ///< Checks if the given world is unlocked in extra modes.
+    bool isMultiWorldOpenFlag(int world); ///< Checks if the given world is unlocked in extra modes.
 
 private:
     /// @brief Ensures that the save's major revision number matches the current one.
@@ -165,7 +165,7 @@ public:
     int getScore() const; ///< Gets the score.
 
     void setStaffCreditHighScore(u16 score); ///< Sets the staff credit high score.
-    int getStaffCreditHighScore() const; ///< Gets the staff credit high score.
+    int getStaffCreditHighScore(); ///< Gets the staff credit high score.
 
     /// @brief Sets the given hint movie as bought.
     void onOtehonMenuOpenFlag(int movie);
