@@ -1,8 +1,8 @@
 #include <game/bases/d_wipe_mario.hpp>
 #include <game/bases/d_base_actor.hpp>
 #include <game/bases/d_game_com.hpp>
-#include <game/bases/d_a_py_mng.hpp>
-#include <game/bases/d_a_py_demo_mng.hpp>
+#include <game/bases/d_a_player_manager.hpp>
+#include <game/bases/d_a_player_demo_manager.hpp>
 
 dWipeMario_c *dWipeMario_c::m_instance;
 

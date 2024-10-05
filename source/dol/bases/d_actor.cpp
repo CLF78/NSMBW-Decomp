@@ -1,157 +1,22 @@
 #include <game/bases/d_actor.hpp>
+#include <game/bases/d_attention.hpp>
+#include <game/bases/d_a_player.hpp>
+#include <game/bases/d_a_player_manager.hpp>
+#include <game/bases/d_a_yoshi.hpp>
 #include <game/bases/d_audio.hpp>
-#include <game/bases/d_s_stage.hpp>
-#include <game/bases/d_game_com.hpp>
+#include <game/bases/d_bg.hpp>
+#include <game/bases/d_cd.hpp>
+#include <game/bases/d_effactor_mng.hpp>
+#include <game/bases/d_fukidashiManager.hpp>
 #include <game/bases/d_info.hpp>
-#include <constants/sjis_constants.h>
+#include <game/bases/d_game_com.hpp>
+#include <game/bases/d_multi_mng.hpp>
+#include <game/bases/d_s_stage.hpp>
+#include <game/bases/d_score_mng.hpp>
+#include <game/mLib/m_ef.hpp>
 #include <lib/nw4r/g3d/scn_mdl.hpp>
-
-class dCdArea_c {
-public:
-    AreaBoundU16 bound;
-};
-
-class dCdUnk_c {
-public:
-    char pad[8];
-    u16 unk;
-};
-
-class dCdFile_c {
-public:
-    char pad[0xc];
-    dCdUnk_c *mpUnk;
-    char pad2[0x1c];
-    dCdArea_c *areas;
-    char pad3[0x380];
-
-    u8 getAreaNo(mVec3_c *);
-    dCdArea_c *getAreaP(u8 zoneID, AreaBound *bound);
-};
-
-class dCd_c {
-public:
-    dCdFile_c courses[4];
-
-    dCdFile_c *getFileP(int i) {
-        dCdFile_c *course = &courses[i];
-        if (course->areas != nullptr) {
-            return course;
-        }
-        return nullptr;
-    }
-
-    static dCd_c *m_instance;
-};
-
-
-class dAttention_c {
-public:
-    void entry(fBaseID_e);
-
-    static dAttention_c *mspInstance;
-};
-
-class dBg_c {
-public:
-    void setWaterInWave(float, float, u8);
-
-    char pad[0x8fea0];
-    float loop;
-
-    static dBg_c *m_bg_p;
-};
-
-class mEf {
-public:
-    static void createEffect(const char *, unsigned long, const mVec3_c *, const mAng3_c *, const mVec3_c *);
-};
-
-class asdf {
-public:
-    static float v1, v2, v3, v4;
-};
-
-class DoubleBoundingBox {
-public:
-    DoubleBoundingBox() : mBound1(0, 0), mBound2(0, 0) {}
-
-    mVec2_c mBound1;
-    mVec2_c mBound2;
-    BoundingBox mDestroyBound;
-};
-
-class daPlBase_c : public dActor_c {
-    char pad[0x10fe];
-};
-
-class daYoshi_c : public daPlBase_c {
-public:
-    u8 pad2[0xA0];
-    int _a0;
-
-    void getMouthMtx(mMtx_c *);
-    void getTongueTipMtx(mMtx_c *);
-};
-
-class dAcPy_c : public daPlBase_c {
-public:
-    bool isDrawingCarryFukidashi();
-    void getCcBounds(AreaBound &);
-    void cancelCarry(dActor_c *);
-
-    char pad[0x15e8];
-    fBaseID_e carryActorID;
-};
-
-
-class daPyMng_c {
-public:
-    static void addScore(int, int);
-    static dAcPy_c *getPlayer(int);
-    static u8 mActPlayerInfo;
-    static int mNum;
-
-    static bool checkPlayer(u8 i) { return mActPlayerInfo & (1 << i); }
-};
-
-class dMultiMng_c {
-public:
-    void incEnemyDown(int killedBy);
-    void setClapSE();
-
-    static dMultiMng_c *mspInstance;
-};
-
-struct dfukidashiManager_c_substruct {
-    bool smth;
-    char pad[0x23b];
-};
-
-class dfukidashiManager_c {
-public:
-    char pad[0x381];
-    dfukidashiManager_c_substruct smth[4];
-
-    static dfukidashiManager_c *m_instance;
-};
-
-class dScoreMng_c {
-public:
-    void FUN_800e24b0(float, float, dActor_c *, bool);
-    void FUN_800e2190(float, float, dActor_c *, bool, short);
-
-    static dScoreMng_c *m_instance;
-    static float smc_SCORE_X;
-    static float smc_SCORE_Y;
-};
-
-class dEffActorMng_c {
-public:
-    void createWaterSplashEff(mVec3_c &, unsigned long, s8, mVec3_c);
-
-    static dEffActorMng_c *m_instance;
-};
+#include <constants/sjis_constants.h>
+#include <constants/sound_list.h>
 
 bool dActor_c::mExecStopReq;
 bool dActor_c::mDrawStopReq;
@@ -182,26 +47,23 @@ dActor_c::dActor_c() : _0(0), mCarryingPlayerNo(-1), _14(0), _18(1.0f) {
 
     visibleAreaSize.reset();
     visibleAreaOffset.reset();
-    mMaxBound1.reset();
-    mMaxBound2.reset();
+    mCullLimit.reset();
+    mCullAreaLimit.reset();
 
-    _224 = nullptr;
+    mSomeBitField = nullptr;
     _228 = nullptr;
     eaterActorID = 0;
     _245 = 2;
     _258 = 0;
 
     mPlayerNo = -1;
-    _268 = false;
+    mWasSquished = false;
 
     setKind(0);
 
-    _266 = 1;
+    mStopMask = 1;
 
-    // mMaxBound1.set(dActor_c::smc_CULL_XLIMIT, dActor_c::smc_CULL_YLIMIT);
-    // mMaxBound2.set(dActor_c::smc_CULL_AREA_XLIMIT, dActor_c::smc_CULL_AREA_YLIMIT);
-    setDefaultMaxBound1();
-    setDefaultMaxBound2();
+    initCullLimits();
     mDestroyBound = BoundingBox(256.0f, 256.0f, 80.0f, 80.0f);
 
     dCdFile_c *course = dCd_c::m_instance->getFileP(dScStage_c::m_instance->currCourse);
@@ -220,7 +82,7 @@ dActor_c::dActor_c() : _0(0), mCarryingPlayerNo(-1), _14(0), _18(1.0f) {
     mRc.mLayer = mLayer;
 
     _254 = 0;
-    _23e = 0;
+    mBlockHitRequested = false;
 }
 
 dActor_c::~dActor_c() {
@@ -256,12 +118,12 @@ int dActor_c::preExecute() {
     if (dGameCom::isGameStop(0xffffffff)) {
         return NOT_READY;
     }
-    if (mExecStop & _266) {
+    if (mExecStop & mStopMask) {
         return NOT_READY;
     }
     mRc.clrLink();
-    if (_23e == 1) {
-        _23e = 0;
+    if (mBlockHitRequested == true) {
+        mBlockHitRequested = false;
         block_hit_init();
     }
     return SUCCEEDED;
@@ -269,7 +131,7 @@ int dActor_c::preExecute() {
 
 void dActor_c::postExecute(fBase_c::MAIN_STATE_e status) {
     if (status == SUCCESS) {
-        if ((mActorProperties & 0x400) == 0) {
+        if (!(mActorProperties & 0x400)) {
             mPos.x = dScStage_c::getLoopPosX(mPos.x);
         }
         mCc.clear();
@@ -277,7 +139,7 @@ void dActor_c::postExecute(fBase_c::MAIN_STATE_e status) {
             mBc.checkLink();
             mRc.chkLink();
         }
-        if ((mActorProperties & 0x8) != 0) {
+        if (mActorProperties & 0x8) {
             dAttention_c::mspInstance->entry(mUniqueID);
         }
         _1e8 = 0.0f;
@@ -309,7 +171,6 @@ const char *dActor_c::getKindString() const {
 
 void dActor_c::setTmpCtData(u8 layer) {
     m_tmpCtLayerNo = layer;
-    return;
 }
 
 dActor_c *dActor_c::construct(ProfileName profName, unsigned long param, const mVec3_c *position, const mAng3_c *rotation, u8 layer) {
@@ -328,12 +189,12 @@ void dActor_c::setKind(u8 kind) {
 }
 
 void dActor_c::setSearchNearPlayerFunc(int loopType) {
-    static const searchNearPlayerFunc funcs[3] = {
+    static const searchNearPlayerFunc searchFunc[3] = {
         searchNearPlayerNormal,
         searchNearPlayerLoop,
         searchNearPlayerLoop
     };
-    mSearchNearPlayerFunc = funcs[loopType];
+    mSearchNearPlayerFunc = searchFunc[loopType];
 }
 
 dAcPy_c *dActor_c::searchNearPlayer(mVec2_c &pos) {
@@ -368,7 +229,7 @@ dAcPy_c *dActor_c::searchNearPlayerNormal(mVec2_c &delta, const mVec2_c &selfPos
 dAcPy_c *dActor_c::searchNearPlayerLoop(mVec2_c &delta, const mVec2_c &selfPos) {
     dAcPy_c *closestPlayer = nullptr;
 
-    float bgSmth = dBg_c::m_bg_p->loop;
+    float bgSmth = dBg_c::m_bg_p->mLoopOffset;
 
     mVec2_c loopSelfPos;
     loopSelfPos.x = dScStage_c::getLoopPosX(selfPos.x);
@@ -409,12 +270,12 @@ dAcPy_c *dActor_c::searchNearPlayerLoop(mVec2_c &delta, const mVec2_c &selfPos) 
 }
 
 void dActor_c::setGetTrgToSrcDirFunc(int loopType) {
-    static const getTrgToSrcDirFunc funcs[3] = {
+    static const getTrgToSrcDirFunc getdirFunc[3] = {
         getTrgToSrcDirNormal,
         getTrgToSrcDirLoop,
         getTrgToSrcDirLoop
     };
-    mGetTrgToSrcDirFunc = funcs[loopType];
+    mGetTrgToSrcDirFunc = getdirFunc[loopType];
 }
 
 
@@ -430,7 +291,7 @@ bool dActor_c::getTrgToSrcDirLoop(float f1, float f2) {
     float loopPos1 = dScStage_c::getLoopPosX(f1);
     float loopPos2 = dScStage_c::getLoopPosX(f2);
     float diff = loopPos1 - loopPos2;
-    float bgLoop = dBg_c::m_bg_p->loop / 2;
+    float bgLoop = dBg_c::m_bg_p->mLoopOffset / 2;
     if (diff < 0.0f) {
         return !(diff < -bgLoop);
     } else {
@@ -498,19 +359,18 @@ void dActor_c::setSoftLight_Item(m3d::bmdl_c &mdl) {
 void dActor_c::deleteActor(u8 param_1) {
     deleteRequest();
 
-    u8 *c224 = _224;
     u16 *c228 = _228;
-    if (c224 == nullptr || c228 == nullptr) {
+    if (mSomeBitField == nullptr || c228 == nullptr) {
         return;
     }
 
     if (param_1 == 0) {
-        if (c224 != nullptr) {
-            *c224 = *c224 & 0xfe;
+        if (mSomeBitField != nullptr) {
+            *mSomeBitField = *mSomeBitField & 0xfe;
         }
     } else {
-        if (c224 != nullptr) {
-            *c224 = *c224 | 8;
+        if (mSomeBitField != nullptr) {
+            *mSomeBitField = *mSomeBitField | 8;
         }
         if (c228 != nullptr) {
             *c228 = 300;
@@ -536,7 +396,7 @@ bool dActor_c::cullCheck(const mVec3_c &pos, const AreaBound &bound, u8 areaID) 
     mVec2_c doubleBoundSize = bound.getSize();
     doubleBoundSize *= 2.0f;
 
-    mVec2_c mbd(mMaxBound2.x, mMaxBound2.y);
+    mVec2_c mbd(mCullAreaLimit.x, mCullAreaLimit.y);
 
     if ((course->mpUnk->unk & 1) == 0) {
         if (b.x + doubleBoundSize.x < -mbd.x || b.x > area->bound.width + mbd.x) {
@@ -573,7 +433,7 @@ bool dActor_c::ActorScrOutCheck(u16 someBitfield) {
         }
     }
     if (res && (someBitfield & 2) == 0) {
-        deleteActor(_268);
+        deleteActor(mWasSquished);
     }
     return res;
 }
@@ -713,20 +573,21 @@ void dActor_c::allEnemyDeathEffSet() {
     mEf::createEffect("Wm_en_burst_s", 0, &center, nullptr, nullptr);
 }
 
-void dActor_c::touchFlagpole(s8 smth, int b) {
-    mVec3_c oldPos(mPos);
-    mVec3_c oldCenter(mCenterOffs);
-    _268 = true;
+void dActor_c::burst(s8 smth, int noScore) {
+    // Used when the Wiimote platforms squish an actor
+    mVec3_c burstPos = mPos;
+    mVec3_c oldCenter = mCenterOffs;
+    mWasSquished = true;
     for (int i = 0; i < daPyMng_c::mNum; i++) {
         dAcPy_c *player = daPyMng_c::getPlayer(i);
         if (player != nullptr && fManager_c::searchBaseByID(player->carryActorID) == this) {
             player->cancelCarry(this);
         }
     }
-    oldPos += oldCenter;
-    mEf::createEffect("Wm_en_burst_s", 0, &oldPos, nullptr, nullptr);
+    burstPos += oldCenter;
+    mEf::createEffect("Wm_en_burst_s", 0, &burstPos, nullptr, nullptr);
     deleteActor(1);
-    if (!b) {
+    if (!noScore) {
         if (smth < 0) {
             dScoreMng_c::m_instance->FUN_800e24b0(dScoreMng_c::smc_SCORE_X, dScoreMng_c::smc_SCORE_Y, this, true);
         } else {
@@ -750,8 +611,8 @@ bool dActor_c::setEatSpitOut(dActor_c *actor) {
 }
 
 bool dActor_c::setEatGlupDown(dActor_c *actor) {
-    static const int yoshiEatPoints[] = { 1, 4 };
-    static const int yoshiEatPoints2[] = { 200, 1000 };
+    static const int yoshiEatPoints[] = { 1, 4 }; ///< @unofficial
+    static const int yoshiEatPoints2[] = { 200, 1000 }; ///< @unofficial
 
     if (_254 != 2) {
         mVec3_c adjPos = actor->mPos;
@@ -807,17 +668,13 @@ void dActor_c::eatMove(dActor_c *actor) {
     mPos.y = tongueTipMtx.transY() - mCenterOffs.y;
 }
 
-void dActor_c::vfb4() {
-}
+void dActor_c::vfb4() {}
 
-void dActor_c::cancelFunsuiActUpper() {
-}
+void dActor_c::cancelFunsuiActUpper() {}
 
-void dActor_c::cancelFunsuiActSide(int) {
-}
+void dActor_c::cancelFunsuiActSide(int) {}
 
-void dActor_c::cancelFunsuiActVanish() {
-}
+void dActor_c::cancelFunsuiActVanish() {}
 
 // [(Place this in a separate file, other actors make use of this too.)]
 class SlideComboSELookup {
@@ -853,7 +710,17 @@ public:
 };
 
 void dActor_c::slideComboSE(int param_1, bool param_2) {
-    static const SlideComboSELookup cs_combo_se(406, 407, 408, 409, 410, 411, 412, 412, 412);
+    const static SlideComboSELookup cs_combo_se(
+        SE_EMY_KAME_HIT_1,
+        SE_EMY_KAME_HIT_2,
+        SE_EMY_KAME_HIT_3,
+        SE_EMY_KAME_HIT_4,
+        SE_EMY_KAME_HIT_5,
+        SE_EMY_KAME_HIT_6,
+        SE_EMY_KAME_HIT_7,
+        SE_EMY_KAME_HIT_7,
+        SE_EMY_KAME_HIT_7
+    );
 
     if ((u8) mPlayerNo <= 3) {
         int a = param_1;
@@ -888,7 +755,7 @@ void dActor_c::waterSplashEffect(const mVec3_c &pos, float param_2) {
     mVec3_c weirdPos(param_2, param_2, param_2);
     dEffActorMng_c::m_instance->createWaterSplashEff(shiftedPos, idk, -1, weirdPos);
 
-    dAudio::g_pSndObjMap->startSound(642, shiftedPos, 0);
+    dAudio::g_pSndObjMap->startSound(SE_OBJ_CMN_SPLASH, shiftedPos, 0);
 
     dBg_c::m_bg_p->setWaterInWave(pos.x, pos.y, 6);
 }
@@ -900,7 +767,7 @@ void dActor_c::yoganSplashEffect(const mVec3_c &pos, float param_2) {
     mVec3_c weirdPos(param_2, param_2, param_2);
     dEffActorMng_c::m_instance->createWaterSplashEff(shiftedPos, idk, -1, weirdPos);
 
-    dAudio::g_pSndObjMap->startSound(644, shiftedPos, 0);
+    dAudio::g_pSndObjMap->startSound(SE_OBJ_CMN_SPLASH_LAVA, shiftedPos, 0);
 
     if (param_2 < 1.0f) {
         dBg_c::m_bg_p->setWaterInWave(pos.x, pos.y, 16);
@@ -916,7 +783,7 @@ void dActor_c::poisonSplashEffect(const mVec3_c &pos, float param_2) {
     mVec3_c bruh(param_2, param_2, param_2);
     dEffActorMng_c::m_instance->createWaterSplashEff(shiftedPos, idk, -1, bruh);
 
-    dAudio::g_pSndObjMap->startSound(643, pos, 0);
+    dAudio::g_pSndObjMap->startSound(SE_OBJ_CMN_SPLASH_POISON, pos, 0);
 
     if (param_2 < 1.0f) {
         dBg_c::m_bg_p->setWaterInWave(pos.x, pos.y, 23);

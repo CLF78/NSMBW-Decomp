@@ -1,5 +1,6 @@
 #pragma once
 
+#include <types.h>
 #include <game/bases/d_rc.hpp>
 
 class dBc_c {
@@ -22,7 +23,9 @@ public:
 
     bool isHead()  { return mFlags & 0b00000000000000000000000000010101; }
     bool isWallL() { return mFlags & 0b00000000000000000000000000101010; }
-    bool isFoot(); //  { return mFlags & 0b00000000000111111110000000000000; }
+    bool isFoot() NOINLINE {
+        return mFlags & 0b00000000000111111110000000000000;
+    }
     bool isWallR() { return mFlags & 0b00111100000000000000000000000000; }
 
 };
