@@ -1,6 +1,7 @@
 #pragma once
 #include <types.h>
-#include <game/bases/d_actor.hpp>
+#include <game/bases/d_base_actor.hpp>
+#include <game/mLib/m_vec.hpp>
 
 /**
  * @brief Collider ("Collision Check") class - handles collisions between actors.
@@ -150,7 +151,7 @@ public:
      * @param actor The actor to register.
      * @param collInfo The collider data to set.
      */
-    void registerCc(dActor_c *actor, CcData_s *collInfo);
+    void registerCc(dBaseActor_c *actor, CcData_s *collInfo);
 
     /**
      * @brief Registers an owner actor to this collider and sets the collider data.
@@ -159,10 +160,10 @@ public:
      * @param collInfo The collider data to set.
      * @param nonCollideMask The non-collide mask to set.
      */
-    void registerCc(dActor_c *actor, CcData_s *collInfo, u8 nonCollideMask);
+    void registerCc(dBaseActor_c *actor, CcData_s *collInfo, u8 nonCollideMask);
 
     /// Sets a friend actor for this collider.
-    void setFriendActor(dActor_c *actor) { mFriendActor = actor; }
+    void setFriendActor(dBaseActor_c *actor) { mFriendActor = actor; }
 
     /**
      * @brief Gets the result of a hit check.
@@ -256,8 +257,8 @@ private:
     static bool _hitCheckDaikeiLR(dCc_c *ccTrp, dCc_c *ccBox);
 
 private:
-    dActor_c *mpOwner; ///< The actor this collider belongs to.
-    dActor_c *mFriendActor; ///< A second actor that this collider will not collide with.
+    dBaseActor_c *mpOwner; ///< The actor this collider belongs to.
+    dBaseActor_c *mFriendActor; ///< A second actor that this collider will not collide with.
 
     u32 unk2; ///< [Unused (?)].
 

@@ -23,6 +23,8 @@ public:
     /// @brief Copy constructor.
     mVec2_c(const mVec2_c &v) { set(v.x, v.y); }
 
+    void reset() { set(0, 0); }
+
     void set(float x, float y) {
         this->x = x;
         this->y = y;
@@ -64,7 +66,7 @@ public:
     mVec2_c &operator-=(const mVec2_c &v) { x -= v.x; y -= v.y; return *this; }
 
     /// @brief Augmented scalar product operator.
-    mVec2_c &operator*=(f32 f) { x *= f; y *= f; return *this; }
+    mVec2_c &operator*=(f32 f) { x = f * x; y = f * y; return *this; }
 
     /// @brief Augmented scalar division operator.
     mVec2_c &operator/=(f32 f) { return operator*=(1.0f / f); }
@@ -97,11 +99,13 @@ public:
 /// @brief A three-dimensional floating point vector.
 /// @ingroup mlib
 /// @todo Add EGG::vector3f operators.
-class mVec3_c : public nw4r::math::VEC3 {
+class mVec3_c : public EGG::Vector3f {
 public:
 
     /// @brief Constructs an empty vector.
     mVec3_c() {}
+
+    ~mVec3_c() {}
 
     /// @brief Constructs a vector from a float array.
     mVec3_c(const f32 *p) { x = p[0]; y = p[1]; z = p[2]; }
@@ -112,26 +116,26 @@ public:
     /// @brief Constructs a new vector from an existing vector from the MTX library.
     mVec3_c(const Vec &v) { x = v.x; y = v.y; z = v.z; }
 
-    /// @brief Constructs a new vector from an existing vector from the nw4r::math library.
-    mVec3_c(const nw4r::math::VEC3 &v) { x = v.x; y = v.y; z = v.z; }
+    /// @brief Copy constructor.
+    // mVec3_c(const mVec3_c &v) { set(v.x, v.y, v.z); }
+    mVec3_c(const mVec3_c &v) { set(v.x, v.y, v.z); }
 
-    /// @brief Float cast operator.
-    operator f32*() { return &x; }
+    /// @brief Copy constructor with a different Z value.
+    mVec3_c(const mVec3_c &v, float fz) { x = v.x; y = v.y; z = fz; }
 
-    /// @brief Const float cast operator.
-    operator const f32*() const { return &x; }
+    // void set(float x, float y, float z) {
+    //     this->x = x;
+    //     this->y = y;
+    //     this->z = z;
+    // }
+
+    mVec3_c &operator=(const mVec3_c &v) { x = v.x; y = v.y; z = v.z; return *this; }
 
     /// @brief Vec cast operator.
     operator Vec*() { return (Vec*)&x; }
 
     /// @brief Const Vec cast operator.
     operator const Vec*() const { return (const Vec*)&x; }
-
-    /// @brief nw4r::math::VEC3 cast operator.
-    operator nw4r::math::VEC3*() { return (nw4r::math::VEC3*)&x; }
-
-    /// @brief Const nw4r::math::VEC3 cast operator.
-    operator const nw4r::math::VEC3*() const { return (const nw4r::math::VEC3*)&x; }
 
     /// @brief Augmented addition operator.
     mVec3_c &operator+=(const mVec3_c &v) { x += v.x; y += v.y; z += v.z; return *this; }
@@ -184,4 +188,44 @@ public:
     static mVec3_c Ex; ///< The unit vector for the X axis.
     static mVec3_c Ey; ///< The unit vector for the Y axis.
     static mVec3_c Ez; ///< The unit vector for the Z axis.
+};
+
+
+struct AreaBound {
+    AreaBound() {
+    }
+    AreaBound(float x, float y, float w, float h) {
+        this->x = x;
+        this->y = y;
+        width = w;
+        height = h;
+    }
+    AreaBound(const AreaBound &other) {
+        set(other);
+    }
+    void set(float x, float y, float w, float h) {
+        this->x = x;
+        this->y = y;
+        width = w;
+        height = h;
+    }
+    void set(const AreaBound &other) {
+        x = other.x;
+        y = other.y;
+        width = other.width;
+        height = other.height;
+    }
+
+    mVec2_c withPos(const mVec3_c &pos) const {
+        mVec2_c res;
+        res.x = pos.x + x - width;
+        res.y = pos.y + y + height;
+        return res;
+    }
+
+    mVec2_c getSize() const {
+        return mVec2_c(width, height);
+    }
+
+    float x, y, width, height;
 };
