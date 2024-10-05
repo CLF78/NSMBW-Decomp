@@ -1,8 +1,8 @@
 #include <game/bases/d_wipe_dokan.hpp>
 #include <game/bases/d_base_actor.hpp>
 #include <game/bases/d_game_com.hpp>
-#include <game/bases/d_a_py_mng.hpp>
-#include <game/bases/d_a_py_demo_mng.hpp>
+#include <game/bases/d_a_player_manager.hpp>
+#include <game/bases/d_a_player_demo_manager.hpp>
 
 dWipeDokan_c *dWipeDokan_c::m_instance;
 
@@ -116,7 +116,7 @@ bool dWipeDokan_c::MuKiDecision() {
     if (actPlayer < 0) {
         return false;
     }
-    dBaseActor_c *player = daPyMng_c::getPlayer(actPlayer);
+    dAcPy_c *player = daPyMng_c::getPlayer(actPlayer);
     if (player == nullptr) {
         return false;
     }

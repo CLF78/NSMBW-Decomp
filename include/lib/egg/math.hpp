@@ -33,9 +33,6 @@ namespace EGG {
         /// @brief Constructs a vector from two floating point values.
         Vector2f(f32 fx, f32 fy) { set(fx, fy); }
 
-        /// @brief Constructs a new vector from an existing vector.
-        // Vector2f(const Vector2f &v) { set(v.x, v.y); }
-
         void set(float x, float y) {
             this->x = x;
             this->y = y;
@@ -58,9 +55,6 @@ namespace EGG {
         /// @brief Constructs a vector from two floating point values.
         Vector3f(f32 fx, f32 fy, f32 fz) { set(fx, fy, fz); }
 
-        /// @brief Constructs a new vector from an existing vector.
-        // Vector3f(const Vector3f &v) { set(v.x, v.y, v.z); }
-
         void set(float x, float y, float z) {
             this->x = x;
             this->y = y;
@@ -68,6 +62,7 @@ namespace EGG {
         }
     };
 
+    /// @brief A sphere defined by a center point and a radius.
     class Sphere3f {
     public:
         Sphere3f() {}
