@@ -15,7 +15,7 @@ typedef struct {
     void *mpHeapStart;
     void *mpHeapEnd;
     OSMutex *mpMutex;
-} MEMiHeapHeader;
+} MEMiHeapHead;
 
 #ifdef __cplusplus
 }
