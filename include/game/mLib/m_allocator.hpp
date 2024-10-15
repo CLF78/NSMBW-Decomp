@@ -1,8 +1,6 @@
 #pragma once
 #include <types.h>
-#include <lib/rvl/mem/MEMHeapCommon.h>
 #include <lib/egg/allocator.hpp>
-#include <lib/egg/heap/eggFrmHeap.hpp>
 
 class mAllocator_c : public EGG::Allocator {
 public:

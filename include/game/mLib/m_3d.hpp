@@ -3,6 +3,7 @@
 #include <game/mLib/m_allocator.hpp>
 #include <lib/egg/gx/eggLightManager.hpp>
 #include <lib/egg/gx/eggFogManager.hpp>
+#include <lib/egg/heap/eggFrmHeap.hpp>
 #include <lib/nw4r/g3d/anm_obj.hpp>
 #include <lib/nw4r/g3d/anm_obj_chr.hpp>
 #include <lib/nw4r/g3d/scn_leaf.hpp>
