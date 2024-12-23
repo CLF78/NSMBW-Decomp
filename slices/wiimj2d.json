@@ -48,6 +48,19 @@
     ],
     "slices": [
         {
+            "source": "dol/bases/d_CourseSelectGuide.cpp",
+            "memoryRanges": {
+                ".text": "0x9470-0xdbb0",
+                ".ctors": "0x4-0x8",
+                ".rodata": "0x0-0xc0",
+                ".data": "0x108-0x12d0",
+                ".bss": "0x20-0x828",
+                ".sdata": "0xc8-0xd8",
+                ".sbss": "0x38-0x48",
+                ".sdata2": "0xd4-0x100"
+            }
+        },
+        {
             "source": "dol/bases/d_wipe_dokan.cpp",
             "memoryRanges": {
                 ".text": "0x15410-0x159f0",

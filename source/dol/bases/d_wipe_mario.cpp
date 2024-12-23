@@ -113,7 +113,7 @@ void dWipeMario_c::setStatus(mFaderBase_c::EStatus stat) {
     if (stat == OPAQUE) {
         mStatus = OPAQUE;
 
-        mpWnd[0]->setFieldB8(255);
+        mpWnd[0]->setAlpha(255);
         mLyt.ReverseAnimeStartSetup(OUT, false);
 
         mpRootPane->setVisible(true);
@@ -122,7 +122,7 @@ void dWipeMario_c::setStatus(mFaderBase_c::EStatus stat) {
     } else if (stat == HIDDEN) {
         mStatus = HIDDEN;
 
-        mpWnd[0]->setFieldB8(0);
+        mpWnd[0]->setAlpha(0);
         mLyt.ReverseAnimeStartSetup(IN, false);
 
         mpRootPane->setVisible(true);

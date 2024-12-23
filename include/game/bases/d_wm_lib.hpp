@@ -12,7 +12,7 @@ struct ForceListElement {
     const char *levelNode;
     mVec3_c nodePos;
 
-    ~ForceListElement();
+    ~ForceListElement() {}
 };
 
 namespace dWmLib {
@@ -22,4 +22,11 @@ namespace dWmLib {
 
     /// @unofficial
     static int someCourseNo = dCsvData_c::c_START_ID;
+
+    int GetCourseTypeFromCourseNo(int courseNo);
+    bool isKoopaShipAnchor();
+    u8 getStartPointKinokoHouseKindNum();
+    bool isStartPointKinokoHouseStar();
+    bool isStartPointKinokoHouseRed();
+    bool IsCourseClear(int world, int course);
 };

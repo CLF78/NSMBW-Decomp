@@ -137,7 +137,7 @@ void dWipeDokan_c::setStatus(mFaderBase_c::EStatus stat) {
     if (stat == OPAQUE) {
         mStatus = OPAQUE;
 
-        mpPic[0]->setFieldB8(255);
+        mpPic[0]->setAlpha(255);
         mLyt.ReverseAnimeStartSetup(OUT_UP, false);
 
         mpRootPane->setVisible(true);
@@ -146,7 +146,7 @@ void dWipeDokan_c::setStatus(mFaderBase_c::EStatus stat) {
     } else if (stat == HIDDEN) {
         mStatus = HIDDEN;
 
-        mpPic[0]->setFieldB8(0);
+        mpPic[0]->setAlpha(0);
         mLyt.ReverseAnimeStartSetup(IN_DOWN, false);
 
         mpRootPane->setVisible(true);

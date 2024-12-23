@@ -22,7 +22,11 @@ namespace dGameCom {
 
     bool someCheck(mVec3_c *a, AreaBound *b);
     void CreateSmallScore(const mVec3_c &, int, int, bool);
+    u8 GetAspectRatio();
+    bool PlayerEnterCheck(int);
 
     /// @unofficial
     void updateSelectCursor(nw4r::lyt::Picture *pic, int index, bool useSpecialDraw);
+
+    void DispSizeScale(nw4r::math::VEC2 &scale);
 }

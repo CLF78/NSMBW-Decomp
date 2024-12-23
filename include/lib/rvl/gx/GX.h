@@ -241,7 +241,7 @@ typedef enum _GXTexFilter {
 } GXTexFilter;
 
 typedef enum _GXPixelFmt {
-    
+
 } GXPixelFmt;
 typedef enum _GXTexWrapMode {
     GX_CLAMP,
@@ -404,7 +404,9 @@ typedef enum _GXLogicOp {
 } GXLogicOp;
 
 typedef struct _GXRenderModeObj {
-    char pad[0x19];
+    char pad1[8];
+    u16 smth;
+    char pad2[0x19];
     u8 s1;
     char stuff[0x18];
     char stuff2[0x18];
