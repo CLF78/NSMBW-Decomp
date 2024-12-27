@@ -5,7 +5,7 @@ class mVideo {
 public:
     GXRenderModeObj &obj;
 
-    static float getSmth(float offs) { return obj.smth - offs; }
+    static float getSmth(float offs) { return (m_video->obj.smth2 - offs) * 0.5f; }
 
     static mVideo *m_video;
 };

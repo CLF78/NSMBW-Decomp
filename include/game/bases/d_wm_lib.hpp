@@ -23,6 +23,9 @@ namespace dWmLib {
     /// @unofficial
     static int someCourseNo = dCsvData_c::c_START_ID;
 
+    /// @unofficial
+    enum CourseType_e {};
+
     int GetCourseTypeFromCourseNo(int courseNo);
     bool isKoopaShipAnchor();
     u8 getStartPointKinokoHouseKindNum();

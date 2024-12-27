@@ -52,16 +52,16 @@ public:
     void setVisible(bool visible) {
         mFlags = (mFlags & 0xfe) | visible;
     }
-    const math::VEC3 &getPos() const { return pos; }
-    void setPos(const math::VEC3 &pos) { this->pos = pos; }
-    void setScale(const math::VEC2 &scale) { this->scale = scale; }
+
+    void setScale(const math::VEC2 &scale) { mScale = scale; }
     void setAlpha(u8 alpha) { mAlpha = alpha; }
 
-private:
+public:
     char mFill1[0x28]; // To be RE'd
-    math::VEC3 pos;
-    math::VEC3 rot;
-    math::VEC2 scale;
+    math::VEC3 mPos;
+    math::VEC3 mRot;
+    math::VEC2 mScale;
+private:
     float width;
     float height;
     char mFill2[0x64]; // To be RE'd

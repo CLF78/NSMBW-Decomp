@@ -49,27 +49,9 @@ public:
     virtual bool isNormalID(const sStateIDIf_c &id) const = 0; ///< Returns whether a state ID is normal.
 };
 
-/// @brief A default implementation of a state ID checker.
-/// @details ::isNormalID always returns true.
-class sStateIDChk_c : public sStateIDChkIf_c {
+class sStateMethodIf_c {
 public:
-    virtual bool isNormalID(const sStateIDIf_c &) const { return true; }
-};
-
-/// @brief The interface for state managers.
-/// @details A state manager handles execution of and transitioning between state IDs.
-class sStateMgrIf_c {
-public:
-    virtual ~sStateMgrIf_c() {}
-    virtual void initializeState() = 0; ///<  Initializes the current state.
-    virtual void executeState() = 0; ///<  Executes the current state.
-    virtual void finalizeState() = 0; ///<  Prepares the current state for termination.
-    virtual void changeState(const sStateIDIf_c &newStateID) = 0; ///<  Transitions to a new state ID.
-    virtual void refreshState() = 0; ///<  Marks the current state to be executed again.
-    virtual sStateIf_c *getState() const = 0; ///<  Gets the state holder.
-    virtual const sStateIDIf_c *getNewStateID() const = 0; ///<  Gets the next state ID.
-    virtual const sStateIDIf_c *getStateID() const = 0; ///<  Gets the current state ID.
-    virtual const sStateIDIf_c *getOldStateID() const = 0; ///<  Gets the previous state ID.
+    virtual ~sStateMethodIf_c() {}
 };
 
 /// @}

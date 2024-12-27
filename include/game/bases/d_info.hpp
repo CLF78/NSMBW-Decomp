@@ -49,13 +49,11 @@ public:
     bool mIsWorldSelect; ///< Whether the World Select Menu is being displayed.
     int pad3[7];
     int field_3b4;
-
-    char pad3[0x746]; // todo
-    bool smth[4][0x16];
-
     int field_3b8;
-    u8 pad4[0x21];
+    u8 pad4[0x1d];
     u8 mExtensionAttached;
+    u8 pad5[0x724];
+    bool smth[4][0x16];
 
     static dInfo_c *m_instance;
     static StartGameInfo m_startGameInfo;

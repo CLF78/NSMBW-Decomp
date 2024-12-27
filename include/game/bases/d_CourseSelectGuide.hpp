@@ -3,8 +3,11 @@
 #include <game/bases/d_base.hpp>
 #include <game/bases/d_lytbase.hpp>
 #include <game/sLib/s_State.hpp>
+#include <game/sLib/s_StateMethodUsr_FI.hpp>
 #include <game/bases/d_wm_lib.hpp>
 #include <game/bases/d_s_world_map_static.hpp>
+#include <game/bases/d_game_key.hpp>
+#include <game/bases/d_info.hpp>
 
 class dCourseSelectGuide_c {
 public:
@@ -24,10 +27,24 @@ private:
 
     void FUN_80010690();
     void ControllerConnectCheck();
-    static int FUN_80060110(int);
     bool FUN_80010f40(int);
-    void FUN_800125c0(int, int);
-    void FUN_80010b50(int);
+    void FUN_800125c0(short, dWmLib::CourseType_e);
+    void FUN_80010b50(dWmLib::CourseType_e);
+
+    void dostuff(u8 wNo, u8 cNo);
+
+    u8 mUnk;
+
+    LytBase_c mLayout; ///< @brief The layout for the window.
+
+    sFStateMgr_c<dCourseSelectGuide_c, sStateMethodUsr_FI_c> mStateMgrWorldCourse;
+    sFStateMgr_c<dCourseSelectGuide_c, sStateMethodUsr_FI_c> mStateMgrGuide;
+    sFStateMgr_c<dCourseSelectGuide_c, sStateMethodUsr_FI_c> mStateMgrUp;
+    sFStateMgr_c<dCourseSelectGuide_c, sStateMethodUsr_FI_c> mStateMgrDown;
+    sFStateMgr_c<dCourseSelectGuide_c, sStateMethodUsr_FI_c> mStateMgrLeft;
+    sFStateMgr_c<dCourseSelectGuide_c, sStateMethodUsr_FI_c> mStateMgrRight;
+    sFStateMgr_c<dCourseSelectGuide_c, sStateMethodUsr_FI_c> mStateMgrShadow;
+    sFStateMgr_c<dCourseSelectGuide_c, sStateMethodUsr_FI_c> mStateMgrScrollGuide;
 
     STATE_FUNC_DECLARE(dCourseSelectGuide_c, WorldCourseOnStageWait);
     STATE_FUNC_DECLARE(dCourseSelectGuide_c, WorldCourseOnStageAnimeEndCheck);
@@ -69,19 +86,6 @@ private:
     STATE_FUNC_DECLARE(dCourseSelectGuide_c, ScrollGuideDisp);
     STATE_FUNC_DECLARE(dCourseSelectGuide_c, ScrollGuideExitAnimeEndCheck);
 
-    u8 mUnk;
-
-    LytBase_c mLayout; ///< @brief The layout for the window.
-
-    sFStateMgr_c<dCourseSelectGuide_c, sStateMethodUsr_FI_c> mStateMgrWorldCourse;
-    sFStateMgr_c<dCourseSelectGuide_c, sStateMethodUsr_FI_c> mStateMgrGuide;
-    sFStateMgr_c<dCourseSelectGuide_c, sStateMethodUsr_FI_c> mStateMgrUp;
-    sFStateMgr_c<dCourseSelectGuide_c, sStateMethodUsr_FI_c> mStateMgrDown;
-    sFStateMgr_c<dCourseSelectGuide_c, sStateMethodUsr_FI_c> mStateMgrLeft;
-    sFStateMgr_c<dCourseSelectGuide_c, sStateMethodUsr_FI_c> mStateMgrRight;
-    sFStateMgr_c<dCourseSelectGuide_c, sStateMethodUsr_FI_c> mStateMgrShadow;
-    sFStateMgr_c<dCourseSelectGuide_c, sStateMethodUsr_FI_c> mStateMgrScrollGuide;
-
     nw4r::lyt::Pane *mpRootPane; ///< @brief The root pane of the window.
 
     nw4r::lyt::Pane *N_IconPos1P_00,
@@ -119,7 +123,7 @@ private:
                        *P_YkinoFace_00,
                        *P_bgShadow_00;
 
-    int mExtension;
+    Remocon::EXTENSION_TYPE_e mExtension;
     int mWorldNo;
     int mCourseNo;
     int mCourseType;
@@ -165,11 +169,37 @@ private:
     /// @brief Gets the n-th text box.
     LytTextBox_c *getTextBox(int n) { return (&T_worldNum_00)[n]; }
 
-
-    inline int getPaneNum(int i) {
+public:
+    static inline int getPaneNum(int i) {
         static const int paneNums[] = { 0, 1, 3, 2 };
         return paneNums[i];
     }
 
+    void thing(u8 wNo, u8 cNo);
+
+    inline void hideFlag() { P_flagSkull_00->setVisible(false); }
+    inline void showFlag() { P_flagSkull_00->setVisible(true); }
+    inline nw4r::lyt::Picture *getFlag() { return P_flagSkull_00; }
+
     static dCourseSelectGuide_c *m_instance;
+
+    static const int c_DISP_WAIT_TIMER;
+
+private:
+    // [Some unused class - but needed here because it has a static initializer.]
+
+    class NumberHolder {
+    public:
+        NumberHolder() {
+            if (!msIsInit) {
+                a = 20;
+                b = 70;
+                msIsInit = true;
+            }
+        }
+
+        u16 a, b;
+    };
+    static NumberHolder msUnk;
+    static char msIsInit;
 };

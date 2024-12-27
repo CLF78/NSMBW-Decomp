@@ -3,12 +3,15 @@
 #include <game/bases/d_game_display.hpp>
 #include <game/bases/d_game_com.hpp>
 #include <game/bases/d_game_key.hpp>
-#include <game/bases/d_info.hpp>
 #include <game/bases/d_save_mng.hpp>
 #include <game/mLib/m_video.hpp>
 #include <constants/message_list.h>
 
 dCourseSelectGuide_c *dCourseSelectGuide_c::m_instance;
+dCourseSelectGuide_c::NumberHolder dCourseSelectGuide_c::msUnk;
+char dCourseSelectGuide_c::msIsInit;
+
+const int dCourseSelectGuide_c::c_DISP_WAIT_TIMER = 20;
 
 dCourseSelectGuide_c::dCourseSelectGuide_c() :
     mStateMgrWorldCourse(*this, StateID_WorldCourseOnStageWait),
@@ -20,6 +23,7 @@ dCourseSelectGuide_c::dCourseSelectGuide_c() :
     mStateMgrShadow(*this, StateID_ShadowOnStageWait),
     mStateMgrScrollGuide(*this, StateID_ScrollGuideOnStageWait)
 {
+    mVec3_c dummy; // [Unused - generate a constructor for mVec3_c in this TU].
     mInitialized = false;
     m_instance = this;
 }
@@ -73,74 +77,55 @@ bool dCourseSelectGuide_c::createLayout() {
         "corseSelectUIGuide_37_outShadow.brlan"
     };
 
-    static const int groupIdxs[] = {
-        0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 7
-    };
-
-    static const char *groupNames[] = {
-        "A00_underGuide",
-        "A01_zanki",
-        "A02_courseInfo",
-        "A00_underGuide",
-        "A01_zanki",
-        "A02_courseInfo",
-        "A00_underGuide",
-        "A01_zanki",
-        "A02_courseInfo",
-        "B00_ArrowRight",
-        "B01_ArrowLeft",
-        "B02_ArrowUp",
-        "B03_ArrowUnder",
-        "B00_ArrowRight",
-        "B01_ArrowLeft",
-        "B02_ArrowUp",
-        "B03_ArrowUnder",
-        "B00_ArrowRight",
-        "B01_ArrowLeft",
-        "B02_ArrowUp",
-        "B03_ArrowUnder",
+    static const char *GROUP_NAME_DT[] = {
+        "A00_underGuide", "A01_zanki", "A02_courseInfo",
+        "A00_underGuide", "A01_zanki", "A02_courseInfo",
+        "A00_underGuide", "A01_zanki", "A02_courseInfo",
+        "B00_ArrowRight", "B01_ArrowLeft", "B02_ArrowUp", "B03_ArrowUnder",
+        "B00_ArrowRight", "B01_ArrowLeft", "B02_ArrowUp", "B03_ArrowUnder",
+        "B00_ArrowRight", "B01_ArrowLeft", "B02_ArrowUp", "B03_ArrowUnder",
         "C00_shadow",
         "C00_shadow"
     };
 
-    static const char *paneNames[] = {
-        "N_IconPos1P_00",
-        "N_IconPos2P_00",
-        "N_IconPos3P_00",
-        "N_IconPos4P_00",
+    static const int ANIME_INDEX_TBL[] = {
+        0, 0, 0,
+        1, 1, 1,
+        2, 2, 2,
+        3, 3, 3, 3,
+        4, 4, 4, 4,
+        5, 5, 5, 5,
+        6,
+        7
+    };
+
+    static const char *NPANE_NAME_DT[] = {
+        "N_IconPos1P_00", "N_IconPos2P_00", "N_IconPos3P_00", "N_IconPos4P_00",
         "N_mapArrow_00",
-        "N_proportionL_00",
-        "N_proportionR_00",
-        "N_proportionC_00",
-        "N_guideViewC_00",
-        "N_guideViewR_01",
+        "N_proportionL_00", "N_proportionR_00", "N_proportionC_00",
+        "N_guideViewC_00", "N_guideViewR_01",
         "N_left_00"
     };
 
-    static const char *textPaneNames[] = {
+    static const char *T_PANE_NAME_TBL[] = {
         "T_worldNum_00",
-        "T_cSelect_00",
-        "T_cSelect_pic",
-        "T_lifeNumber_00",
-        "T_lifeNumber_01",
-        "T_lifeNumber_02",
-        "T_lifeNumber_03",
-        "T_guideViewLS_00",
-        "T_guideViewL_01"
+        "T_cSelect_00", "T_cSelect_pic",
+        "T_lifeNumber_00", "T_lifeNumber_01", "T_lifeNumber_02", "T_lifeNumber_03",
+        "T_guideViewLS_00", "T_guideViewL_01"
     };
 
-    static const int textVals[] = {
+    static const int MESSAGE_DATA_TBL[] = {
         MSG_SELECT_WORLD,
         MSG_WM_MENU,
         MSG_WM_WORLD
     };
-    static const char *textNames[] = {
+    static const char *T_PANE_FIXED_NAME_TBL[] = {
         "T_guideViewC_00",
         "T_guideViewR_00",
         "T_world_00"
     };
 
-    static const char *pictureNames[] = {
+    static const char *P_PANE_NAME_TBL[] = {
         "P_cC_1_00",
         "P_cC_2_00",
         "P_cC_3_00",
@@ -163,12 +148,12 @@ bool dCourseSelectGuide_c::createLayout() {
     }
     mLayout.build("corseSelectUIGuide_37.brlyt", 0);
     mLayout.AnimeResRegister(AnmNameTbl, ARRAY_SIZE(AnmNameTbl));
-    mLayout.GroupRegister(groupNames, groupIdxs, ARRAY_SIZE(groupIdxs));
+    mLayout.GroupRegister(GROUP_NAME_DT, ANIME_INDEX_TBL, ARRAY_SIZE(ANIME_INDEX_TBL));
     mpRootPane = mLayout.getRootPane();
-    mLayout.NPaneRegister(paneNames, &N_IconPos1P_00, ARRAY_SIZE(paneNames));
-    mLayout.TPaneRegister(textPaneNames, &T_worldNum_00, ARRAY_SIZE(textPaneNames));
-    mLayout.TPaneNameRegister(textNames, textVals, BMG_CATEGORY_COURSE_SELECT_GUIDE, ARRAY_SIZE(textVals));
-    mLayout.PPaneRegister(pictureNames, &P_cC_1_00, ARRAY_SIZE(pictureNames));
+    mLayout.NPaneRegister(NPANE_NAME_DT, &N_IconPos1P_00, ARRAY_SIZE(NPANE_NAME_DT));
+    mLayout.TPaneRegister(T_PANE_NAME_TBL, &T_worldNum_00, ARRAY_SIZE(T_PANE_NAME_TBL));
+    mLayout.TPaneNameRegister(T_PANE_FIXED_NAME_TBL, MESSAGE_DATA_TBL, BMG_CATEGORY_COURSE_SELECT_GUIDE, ARRAY_SIZE(MESSAGE_DATA_TBL));
+    mLayout.PPaneRegister(P_PANE_NAME_TBL, &P_cC_1_00, ARRAY_SIZE(P_PANE_NAME_TBL));
 
     mLayout.mDrawOrder = 2;
     mpRootPane->setVisible(true);
@@ -181,7 +166,7 @@ bool dCourseSelectGuide_c::createLayout() {
 
     RestNumberDisp();
 
-    mExtension = 3;
+    mExtension = Remocon::EXTENTION_THREE;
     mInitialized = true;
 
     mWorldNo = dScWMap_c::getWorldNo();
@@ -246,7 +231,7 @@ bool dCourseSelectGuide_c::createLayout() {
 void dCourseSelectGuide_c::ScissorMaskSet() {
     d2d::ClipSettings clipSettings;
     if (dGameCom::GetAspectRatio() == 0) {
-        clipSettings.mPos.y = (mVideo::getSmth(330.0f)) * 0.5f;
+        clipSettings.mPos.y = mVideo::getSmth(330.0f);
         clipSettings.mSize.x = 640.0f;
         clipSettings.mSize.y = 330.0f;
         clipSettings.mEnabled = true;
@@ -265,13 +250,14 @@ void dCourseSelectGuide_c::FUN_80010690() {
     int currPane = 0;
     int playerCount = -1;
     for (int i = 0; i < 4; i++) {
-        int paneIdx = getPaneNum(i);
-        if (dGameCom::PlayerEnterCheck(FUN_80060110(paneIdx))) {
-            playerCount++;
-            mVec3_c pos = getPane(currPane)->getPos();
-            currPane++;
-            getPicturePane(picPaneNums[paneIdx])->setPos(pos);
+        daPyMng_c::PyType paneIdx = (daPyMng_c::PyType) getPaneNum(i);
+        int cvtPaneIdx = daPyMng_c::getPlayerIndex(paneIdx);
+        if (dGameCom::PlayerEnterCheck(cvtPaneIdx)) {
+            mVec3_c pos = getPane(currPane)->mPos;
+            getPicturePane(picPaneNums[paneIdx])->mPos = pos;
             getPicturePane(picPaneNums[paneIdx])->setVisible(true);
+            currPane++;
+            playerCount++;
         }
     }
     getPane(0)->setVisible(false);
@@ -281,18 +267,27 @@ void dCourseSelectGuide_c::FUN_80010690() {
     getPane(playerCount)->setVisible(true);
 }
 
+inline int getPaneNum(int i) {
+    static const int paneNums[] = { 0, 1, 3, 2 };
+    return paneNums[i];
+}
+
+inline int getRest(int i) {
+    return daPyMng_c::mRest[i];
+}
+
 void dCourseSelectGuide_c::RestNumberDisp() {
-    static const int picPaneNums[] = { 3, 4, 6, 5 };
+    static const int textBoxIdxs[] = { 3, 4, 6, 5 };
 
     for (int i = 0; i < 4; i++) {
-        int pn = getPaneNum(i);
-        if (FUN_80060110(pn) || true) {
-            int rest = daPyMng_c::mRest[pn];
-            if (mRest[i] != rest) {
-                mRest[i] = rest;
-                LytTextBox_c *textBox = getTextBox(picPaneNums[i]);
-                LytTextBox_c::SetTextInt(&rest, &dGameDisplay_c::smc_PAD_REST_NUMBER, textBox, true);
-            }
+        daPyMng_c::PyType paneIdx = (daPyMng_c::PyType) getPaneNum(i);
+        int cvtPaneIdx = daPyMng_c::getPlayerIndex(paneIdx);
+        int rest = getRest(paneIdx);
+        if (mRest[i] != rest) {
+            mRest[i] = rest;
+            int textIdx = textBoxIdxs[i];
+            LytTextBox_c *textBox = getTextBox(textIdx);
+            LytTextBox_c::SetTextInt(&rest, &dGameDisplay_c::c_PLAYNUM_DIGIT, textBox, true);
         }
     }
     mShowRestNumber = false;
@@ -371,7 +366,7 @@ void dCourseSelectGuide_c::doDelete() {
     mLayout.doDelete();
 }
 
-void dCourseSelectGuide_c::FUN_80010b50(int type) {
+void dCourseSelectGuide_c::FUN_80010b50(dWmLib::CourseType_e type) {
     static const int clearedKinokoHouseBmgIds[] = {
         0x37, 0x38, 0x37, 0x38, 0x37, 0x38, 0x37, 0x38, 0x38
     };
@@ -383,7 +378,7 @@ void dCourseSelectGuide_c::FUN_80010b50(int type) {
         return;
     }
     if (type - 3U <= 1) {
-        type = mCourseNo + 1;
+        type = (dWmLib::CourseType_e) (mCourseNo + 1);
     } else if (type == 2) {
         mCourseType = 11;
     } else {
@@ -478,6 +473,11 @@ void dCourseSelectGuide_c::CollectionCoinSet() {
             }
         }
     }
+}
+
+bool dCourseSelectGuide_c::FUN_80010f40(int type) {
+    static const u8 flags[] = { 1, 2, 4, 8 };
+    return (m434 & flags[type]) != 0;
 }
 
 void dCourseSelectGuide_c::initializeState_WorldCourseOnStageWait() {}
@@ -895,7 +895,7 @@ void dCourseSelectGuide_c::finalizeState_ScrollGuideOnStageWait() {
 }
 
 void dCourseSelectGuide_c::initializeState_ScrollGuideOnStageAnimeEndCheck() {
-    mExtension = 3;
+    mExtension = Remocon::EXTENTION_THREE;
     mInScrollMode = true;
     N_guideViewC_00->setVisible(false);
     N_guideViewR_01->setVisible(false);
@@ -939,7 +939,7 @@ void dCourseSelectGuide_c::executeState_ScrollGuideExitAnimeEndCheck() {
     mStateMgrScrollGuide.changeState(StateID_ScrollGuideOnStageWait);
 }
 void dCourseSelectGuide_c::finalizeState_ScrollGuideExitAnimeEndCheck() {
-    mExtension = 3;
+    mExtension = Remocon::EXTENTION_THREE;
     m448 = false;
     N_guideViewC_00->setVisible(true);
     N_guideViewR_01->setVisible(true);
@@ -947,7 +947,7 @@ void dCourseSelectGuide_c::finalizeState_ScrollGuideExitAnimeEndCheck() {
     mInScrollMode = false;
 }
 
-void dCourseSelectGuide_c::FUN_800125c0(int courseNo, int type) {
+void dCourseSelectGuide_c::FUN_800125c0(short courseNo, dWmLib::CourseType_e type) {
     if (mCourseNo == courseNo) {
         return;
     }
@@ -957,12 +957,15 @@ void dCourseSelectGuide_c::FUN_800125c0(int courseNo, int type) {
     if (type != 1) {
         CollectionCoinSet();
     }
-    dCyuukan_c *checkpoint = dInfo_c::m_instance->getCyuukan();
-    u8 worldNo = mWorldNo;
-    u8 cNo = courseNo;
-    P_flagSkull_00->setVisible(false);
+    dInfo_c *info = dInfo_c::m_instance;
+    dCyuukan_c *checkpoint;
+    u8 wNo, cNo;
+    cNo = courseNo;
+    wNo = mWorldNo;
+    P_flagSkull_00->mFlags &= 0xfe;
+    checkpoint = &info->mCyuukan;
     for (int i = 0; i < 2; i++) {
-        if (checkpoint->isCyuukanStart(i, worldNo, cNo)) {
+        if (checkpoint->isCyuukanStart(i, wNo, cNo)) {
             P_flagSkull_00->setVisible(true);
             break;
         }
@@ -972,17 +975,14 @@ void dCourseSelectGuide_c::FUN_800125c0(int courseNo, int type) {
 void dCourseSelectGuide_c::ControllerConnectCheck() {
     int attachedExtension = dGameKey_c::m_instance->mRemocon[0]->mAttachedExtension;
     if (attachedExtension != mExtension) {
-        mExtension = attachedExtension;
+        mExtension = (Remocon::EXTENSION_TYPE_e) attachedExtension;
 
         MsgRes_c *msgRes = dMessage_c::getMesRes();
-        // bool hasExt;
-        // if (attachedExtension == Remocon::EXTENTION_NONE) {
-        //     hasExt = 0;
-        // } else {
-        //     hasExt = 1;
-        // }
-        // dInfo_c::m_instance->mExtensionAttached = (attachedExtension == Remocon::EXTENTION_NONE) ? 0 : 1;
-        dInfo_c::m_instance->markExtension(attachedExtension);
+        int attached = 1;
+        if (attachedExtension == 0) {
+            attached = 0;
+        }
+        dInfo_c::m_instance->mExtensionAttached = attached;
         if (mInScrollMode) {
             T_guideViewLS_00->setMessage(msgRes, BMG_CATEGORY_COURSE_SELECT_GUIDE, MSG_BACK_TO_MARIO, 0);
         } else {

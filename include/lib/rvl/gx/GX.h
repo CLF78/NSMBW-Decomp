@@ -404,9 +404,10 @@ typedef enum _GXLogicOp {
 } GXLogicOp;
 
 typedef struct _GXRenderModeObj {
-    char pad1[8];
+    char pad1[6];
+    u16 smth2;
     u16 smth;
-    char pad2[0x19];
+    char pad2[15];
     u8 s1;
     char stuff[0x18];
     char stuff2[0x18];

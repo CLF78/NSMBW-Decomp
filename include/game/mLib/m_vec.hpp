@@ -116,6 +116,9 @@ public:
     /// @brief Constructs a new vector from an existing vector from the MTX library.
     mVec3_c(const Vec &v) { x = v.x; y = v.y; z = v.z; }
 
+    // @brief Constructs a new vector from an existing vector from the NW4R library.
+    mVec3_c(const nw4r::math::VEC3 &v) { x = v.x; y = v.y; z = v.z; }
+
     /// @brief Copy constructor.
     // mVec3_c(const mVec3_c &v) { set(v.x, v.y, v.z); }
     mVec3_c(const mVec3_c &v) { set(v.x, v.y, v.z); }

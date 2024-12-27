@@ -2,5 +2,5 @@
 
 class dGameDisplay_c {
 public:
-    static const int smc_PAD_REST_NUMBER;
+    static const int c_PLAYNUM_DIGIT;
 };

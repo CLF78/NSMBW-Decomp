@@ -9,8 +9,7 @@ public:
         COURSE_TYPE_200 = 0x200
     };
 
-    // static u8 getWorldNo() { return m_WorldNo; }
-    static u8 getWorldNo();
+    static u8 getWorldNo() NOINLINE { return m_WorldNo; }
 
     static bool IsCourseType(int, int, CourseType_e);
 
