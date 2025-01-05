@@ -125,6 +125,7 @@ public:
 
     /// @brief Copy constructor with a different Z value.
     mVec3_c(const mVec3_c &v, float fz) { x = v.x; y = v.y; z = fz; }
+    mVec3_c(const mVec2_c &v, float fz) { x = v.x; y = v.y; z = fz; }
 
     // void set(float x, float y, float z) {
     //     this->x = x;

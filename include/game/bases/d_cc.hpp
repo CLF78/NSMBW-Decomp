@@ -66,6 +66,7 @@ public:
         ATTACK_YOSHI_EAT,
         ATTACK_YOSHI_MOUTH,
         ATTACK_CANNON,
+        ATTACK_UNK15,
         ATTACK_YOSHI_BULLET,
         ATTACK_YOSHI_FIRE,
         ATTACK_ICE_2,
@@ -165,6 +166,10 @@ public:
     /// Sets a friend actor for this collider.
     void setFriendActor(dBaseActor_c *actor) { mFriendActor = actor; }
 
+    dBaseActor_c *getOwner() const { return mpOwner; } ///< Gets the owner actor of this collider.
+
+    float getCeil(float y) { return y + mCcData.mOffsetY - mCcData.mHeight; } ///< Gets the ceiling of the collider.
+
     /**
      * @brief Gets the result of a hit check.
      * @param mask The mask to check.
@@ -256,7 +261,7 @@ private:
     /// Check a trapezoid-shaped collider against a rectangular collider for collisions.
     static bool _hitCheckDaikeiLR(dCc_c *ccTrp, dCc_c *ccBox);
 
-private:
+public:
     dBaseActor_c *mpOwner; ///< The actor this collider belongs to.
     dBaseActor_c *mFriendActor; ///< A second actor that this collider will not collide with.
 
@@ -269,7 +274,6 @@ private:
 
     CcData_s mCcData; ///< The collision data of this collider.
 
-public:
     /**
      * @brief The X or Y offset of the four corners of a trapezoid-shaped collider.
      *

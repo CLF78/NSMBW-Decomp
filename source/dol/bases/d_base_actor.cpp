@@ -153,11 +153,7 @@ void dBaseActor_c::calcSpeed() {
 }
 
 void dBaseActor_c::makeMtx() {
-    // [Loading the axes in this order is required for matching]
-    float z = mPos.z;
-    float y = mPos.y;
-    float x = mPos.x;
-    PSMTXTrans(mMatrix, x, y, z);
+    mMatrix.trans(mPos.x, mPos.y, mPos.z);
     mAng rot = mAng((u16)mAngle.y);
     mMatrix.YrotM(rot);
 }

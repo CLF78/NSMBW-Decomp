@@ -42,7 +42,9 @@
         "__vt__Q23EGG5Fader",
         "getStatus__Q23EGG10ColorFaderCFv",
         "DUMMY_M_VEC__Fs",
-        "__destroy_global_chain_reference"
+        "__destroy_global_chain_reference",
+        "__dt__13dEnFumiNest_cFv",
+        "__vt__18sStateStateMgrIf_c"
     ],
     "slices": [
         {
@@ -133,6 +135,17 @@
             }
         },
         {
+            "source": "dol/bases/d_enemy.cpp",
+            "memoryRanges": {
+                ".text": "0x8e700-0x91bd0",
+                ".rodata": "0x27b0-0x27e0",
+                ".data": "0x13810-0x13be8",
+                ".bss": "0x5fb8-0x6028",
+                ".sbss": "0x340-0x348",
+                ".sdata2": "0x1120-0x11a8"
+            }
+        },
+        {
             "source": "dol/bases/d_md_actor.cpp",
             "memoryRanges": {
                 ".text": "0xc7080-0xc73e0",
@@ -141,7 +154,7 @@
                 ".bss": "0x8600-0x8610",
                 ".sdata": "0x5e0-0x5f0",
                 ".sbss": "0x3e8-0x3f0",
-                ".sdata2": "0x1918-1930"
+                ".sdata2": "0x1918-0x1930"
             }
         },
         {

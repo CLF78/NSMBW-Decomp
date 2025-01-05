@@ -50,4 +50,50 @@ namespace dAudio {
 
     extern SndObjctCmnEmy_c *g_pSndObjEmy;
     extern SndObjctCmnMap_c *g_pSndObjMap;
+
+    template<class T>
+    inline void playObjSound(T *obj, int i, const mVec3_c &pos, int playerNo) {
+        obj->startSound(i, cvtSndObjctPos(pos), playerNo);
+    }
+
+    inline void playEmySound(int i, const mVec3_c &pos, int playerNo) {
+        playObjSound(g_pSndObjEmy, i, pos, playerNo);
+    }
+
+    inline void playMapSound(int i, const mVec3_c &pos, int playerNo) {
+        playObjSound(g_pSndObjMap, i, pos, playerNo);
+    }
+
+    /// @unofficial
+    class ComboSELookup {
+        public:
+            ComboSELookup(u32 v0, u32 v1, u32 v2, u32 v3, u32 v4, u32 v5, u32 v6, u32 v7, u32 v8) {
+                lookup[0] = v0;
+                lookup[1] = v1;
+                lookup[2] = v2;
+                lookup[3] = v3;
+                lookup[4] = v4;
+                lookup[5] = v5;
+                lookup[6] = v6;
+                lookup[7] = v7;
+                lookup[8] = v8;
+            }
+
+            template<class T>
+            void playObjSound(T *obj, int i, const mVec3_c &pos, int playerNo) const {
+                obj->startSound(lookup[i], dAudio::cvtSndObjctPos(pos), playerNo);
+            }
+
+            void playEmySound(int i, const mVec3_c &pos, int playerNo) const {
+                playObjSound(dAudio::g_pSndObjEmy, i, pos, playerNo);
+            }
+
+            void playMapSound(int i, const mVec3_c &pos, int playerNo) const {
+                playObjSound(dAudio::g_pSndObjMap, i, pos, playerNo);
+            }
+
+            u32 size() const { return 9; }
+
+            u32 lookup[9];
+        };
 };

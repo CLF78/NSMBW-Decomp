@@ -49,7 +49,7 @@ public:
     virtual bool ActorDrawCullCheck();
     virtual void block_hit_init();
     virtual bool vf68() { return true; } ///< @unofficial
-    virtual s8 *getPlrNo() { return &mPlayerNo; }
+    virtual s8 *getPlrNo() { return (s8 *) &mPlayerNo; }
     virtual mVec2_c getLookatPos() const;
     virtual bool isSpinLiftUpEnable() { return true; }
     virtual void setSpinLiftUpActor(dActor_c *);
@@ -161,7 +161,7 @@ public:
     mVec2_c mCullLimit;
     mVec2_c mCullAreaLimit;
     BoundingBox mDestroyBound;
-    bool isFacingLeft;
+    bool mIsFacingLeft;
     u8 mAreaNo;
     u8 mBgCollFlags;
 
@@ -191,6 +191,7 @@ public:
     u8 mStopMask;
     u8 mLayer;
     bool mWasSquished;
+    u8 mUnkBool; // enemy related
 
     BoundingBox getDestroyBound() { return mDestroyBound; }
 
@@ -226,5 +227,5 @@ public:
     u8 getKindMask() { return 1 << mKind; }
 };
 
-extern const u8 l_Ami_Line[8];
-extern const float l_Ami_Zpos[2];
+extern const u8 l_Ami_Line[];
+extern const float l_Ami_Zpos[];

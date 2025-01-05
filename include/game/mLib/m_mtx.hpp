@@ -43,6 +43,10 @@ public:
         return mVec3_c(x, y, z);
     }
 
+    mMtx_c &concat(const mMtx_c &other) { PSMTXConcat(*this, other, *this); return *this; }
+    mMtx_c &trans(const mVec3_c &v) { PSMTXTrans(*this, v.x, v.y, v.z); return *this; }
+    mMtx_c &trans(float x, float y, float z) { PSMTXTrans(*this, x, y, z); return *this; }
+
     float transX() const { return getTranslation().x; }
     float transY() const { return getTranslation().y; }
     float transZ() const { return getTranslation().z; }

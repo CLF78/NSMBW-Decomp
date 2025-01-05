@@ -1,5 +1,5 @@
 #include <game/bases/d_CourseSelectGuide.hpp>
-#include <game/bases/d_a_py_mng.hpp>
+#include <game/bases/d_a_player_manager.hpp>
 #include <game/bases/d_game_display.hpp>
 #include <game/bases/d_game_com.hpp>
 #include <game/bases/d_game_key.hpp>
